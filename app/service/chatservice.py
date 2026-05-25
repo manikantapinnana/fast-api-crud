@@ -19,8 +19,8 @@ class ChatService:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Chat request already exists.")
         return self.__chatRepositary.create_chat_request(receiver_id, sender_id)
     
-    def get_all_chat_requests_for_user(self, user_id: int):
-        return self.__chatRepositary.get_all_chat_requests_for_user(user_id)
+    def get_pending_chat_requests_for_user(self, user_id: int):
+        return self.__chatRepositary.get_pending_chat_requests_for_user(user_id)
     
     def update_chat_request_status(self, request_id: int, new_status: str):
         if new_status not in ["pending", "accepted", "rejected"]:

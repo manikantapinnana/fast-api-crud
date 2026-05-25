@@ -22,6 +22,6 @@ app.include_router(user_router, prefix="/users", tags=["users"], dependencies=[D
 app.include_router(chat_router, prefix="/chats", tags=["chats"], dependencies=[Depends(get_current_user)])
 
 
-@app.get("/")
+@app.get("/health", tags=["health"], summary="Health Check", description="Check if the API is running and healthy")
 def read_root():
-    return {"message": "Hello, World!"}
+    return {"message": "I am alive and healthy!😄"}

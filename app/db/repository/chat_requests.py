@@ -13,13 +13,13 @@ class ChatRequests(BaseRepository):
         return new_request
     def chat_request_exists(self, sender_id: int, receiver_id: int):
         request = self.session.query(ChatRequest).filter(
-            ChatRequest.sender_id == sender_id,
-            ChatRequest.receiver_id == receiver_id
+            (ChatRequest.sender_id == sender_id) & (ChatRequest.receiver_id == receiver_id)| (ChatRequest.sender_id == receiver_id) & (ChatRequest.receiver_id == sender_id)
         ).first()
         return bool(request)
-    def get_all_chat_requests_for_user(self, user_id: int):
+    def get_pending_chat_requests_for_user(self, user_id: int):
         requests = self.session.query(ChatRequest).filter(
-            ChatRequest.receiver_id == user_id
+            ChatRequest.receiver_id == user_id,
+            ChatRequest.status == "pending"
         ).all()
         return requests
     def chat_request_accepted_or_rejected(self, request_id: int):
