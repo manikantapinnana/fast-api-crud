@@ -1,16 +1,15 @@
-import datetime
+from datetime import datetime
 
 from app.core.database import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
+
+
 class Message(Base):
     __tablename__ = "messages"
 
     id = Column(Integer, primary_key=True, index=True)
+    request_id = Column(Integer, ForeignKey("chat_requests.id"), nullable=False)
     sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     receiver_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     content = Column(String, nullable=False)
-    timestamp = Column(DateTime, default=datetime.utcnow(), nullable=False)
-
-    sender = relationship("User", foreign_keys=[sender_id], back_populates="sent_messages")
-    receiver = relationship("User", foreign_keys=[receiver_id], back_populates="received_messages")
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)

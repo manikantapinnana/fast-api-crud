@@ -8,3 +8,10 @@ python-multipart
 passlib[argon2]
 python-jose[cryptography]
 argon2-cffi>=21.3.0
+websockets
+wsproto
+
+# Test / dev utilities
+pytest
+httpx
+pytest-asyncio

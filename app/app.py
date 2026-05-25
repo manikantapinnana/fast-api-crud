@@ -19,7 +19,7 @@ app = FastAPI(lifespan=lifespan, title="User Management API", description="API f
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
 app.include_router(user_router, prefix="/users", tags=["users"], dependencies=[Depends(get_current_user)])
-app.include_router(chat_router, prefix="/chats", tags=["chats"], dependencies=[Depends(get_current_user)])
+app.include_router(chat_router, prefix="/chats", tags=["chats"])
 
 
 @app.get("/health", tags=["health"], summary="Health Check", description="Check if the API is running and healthy")

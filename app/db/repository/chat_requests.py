@@ -36,3 +36,18 @@ class ChatRequests(BaseRepository):
             self.session.refresh(request)
             return request
         return None
+
+    def get_chat_request_by_id(self, request_id: int):
+        return self.session.query(ChatRequest).filter(ChatRequest.id == request_id).first()
+
+    def get_chat_request_by_receiver_id_and_request_id(self, receiver_id: int, request_id: int):
+        return self.session.query(ChatRequest).filter(
+            ChatRequest.id == request_id,
+            ChatRequest.receiver_id == receiver_id
+        ).first()
+
+    def get_chat_request_for_user(self, request_id: int, user_id: int):
+        return self.session.query(ChatRequest).filter(
+            ChatRequest.id == request_id,
+            (ChatRequest.sender_id == user_id) | (ChatRequest.receiver_id == user_id),
+        ).first()

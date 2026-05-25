@@ -36,6 +36,17 @@ def decode_access_token(token: str) -> TokenData:
 
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> UserInResponse:
+    return get_current_user_from_token(token, db)
+
+
+def get_current_user_from_token(token: str, db: Session) -> UserInResponse:
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing authentication token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     token_data = decode_access_token(token)
     if not token_data.email:
         raise HTTPException(
