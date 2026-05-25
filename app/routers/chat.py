@@ -32,10 +32,10 @@ class ConnectionManager:
         if not connections:
             self.active_connections.pop(request_id, None)
 
-    async def broadcast(self, request_id: int, message: dict, sender_id: int | None = None):
-        # send to all connections in the room except those belonging to sender_id
+    async def broadcast(self, request_id: int, message: dict, receiver_id: int | None = None, sender_id: int | None = None):
+        # send only to the intended receiver's connections, and skip sender's own connection(s)
         conns = list(self.active_connections.get(request_id, []))
-        print(f"Broadcast to request {request_id}: {len(conns)} connection(s)")
+        print(f"Broadcast to request {request_id}: {len(conns)} connection(s), receiver={receiver_id}, sender={sender_id}")
         for entry in conns:
             if isinstance(entry, tuple):
                 websocket, user_id = entry
@@ -43,7 +43,8 @@ class ConnectionManager:
                 websocket, user_id = entry, None
 
             if sender_id is not None and user_id == sender_id:
-                # skip sender's own connections
+                continue
+            if receiver_id is not None and user_id != receiver_id:
                 continue
 
             try:
@@ -98,7 +99,12 @@ async def websocket_chat_endpoint(websocket: WebSocket, request_id: int, db: Ses
                 persisted_message = ChatService(db).save_chat_message(request_id, current_user.id, ws_message.content)
                 broadcast_payload = MessageResponse.model_validate(persisted_message).model_dump(mode="json")
                 print("Broadcasting message:", broadcast_payload)
-                await websocket_manager.broadcast(request_id, broadcast_payload, sender_id=current_user.id)
+                await websocket_manager.broadcast(
+                    request_id,
+                    broadcast_payload,
+                    receiver_id=persisted_message.receiver_id,
+                    sender_id=current_user.id,
+                )
             except WebSocketDisconnect:
                 websocket_manager.disconnect(request_id, websocket)
                 break
