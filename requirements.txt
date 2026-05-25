@@ -1,8 +1,10 @@
 fastapi
+uvicorn[standard]
 sqlalchemy
 psycopg2-binary
 pydantic
 email-validator
+python-multipart
 passlib[argon2]
 python-jose[cryptography]
 argon2-cffi>=21.3.0
